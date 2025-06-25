@@ -6,7 +6,9 @@
   <title>Pro 3D Bubble Game</title>
   <style>
     html, body {
-      margin: 0; padding: 0; height: 100%;
+      margin: 0;
+      padding: 0;
+      height: 100%;
       background: #0b0c0c;
       font-family: 'Segoe UI', sans-serif;
       user-select: none;
@@ -18,21 +20,51 @@
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
-    #scoreBoard {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      font-weight: bold;
-      font-size: 20px;
-      text-align: left;
-      user-select: none;
-      letter-spacing: 1.5px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 10px 14px;
-      border-radius: 12px;
-      box-shadow: 0 0 15px #00bfffaa;
-      z-index: 10000;
-    }
+
+#scoreBoard {
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #f3f8f8;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  z-index: 10000;
+  justify-content: center;
+  text-align: center;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+  border: none;
+  backdrop-filter: none;
+  text-shadow: 0 0 4px #00e5ff66;
+}
+
+#scoreBoard span {
+  font-weight: bold;
+  font-size: 20px;
+  color: #00e5ff;
+}
+
+@media (max-width: 600px) {
+  #scoreBoard {
+    font-size: 16px;
+    gap: 8px;
+    left: 15px;             /* Left align on mobile */
+    transform: none;        /* Remove center translate */
+    flex-direction: column; /* Stack items vertically */
+    justify-content: flex-start;
+    text-align: left;
+  }
+  #scoreBoard span {
+    font-size: 18px;
+  }
+}
+
+
     .bubble {
       position: absolute;
       background: radial-gradient(circle at 30% 30%, #ffffffaa, #00cfff);
@@ -42,20 +74,24 @@
       transition: transform 0.3s ease, opacity 0.4s ease;
       cursor: pointer;
     }
+
     .burst {
       transform: scale(2.5);
       opacity: 0;
       filter: blur(2px);
       pointer-events: none;
     }
+
     @keyframes floatUp {
       0% { transform: translateY(0); }
       100% { transform: translateY(-100vh); }
     }
+
     @keyframes wobble {
       0%, 100% { transform: translateX(0); }
       50% { transform: translateX(10px); }
     }
+
     #startBtn {
       margin-top: 40vh;
       padding: 14px 32px;
@@ -72,12 +108,15 @@
       z-index: 9999;
       position: relative;
     }
+
     #startBtn:hover {
       background-color: #008fcf;
     }
+
     #gameOverScreen {
       position: fixed;
-      top: 50%; left: 50%;
+      top: 50%;
+      left: 50%;
       transform: translate(-50%, -50%);
       font-size: 32px;
       font-weight: bold;
@@ -90,6 +129,7 @@
       display: none;
       box-shadow: 0 0 30px #00bfffaa;
     }
+
     #gameOverScreen button {
       margin-top: 20px;
       padding: 14px 30px;
@@ -101,163 +141,212 @@
       cursor: pointer;
       user-select: none;
     }
+
     .celebrate {
       animation: pulse 0.5s ease-out;
     }
+
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.4); color: gold; }
       100% { transform: scale(1); }
     }
+footer {
+  position: fixed;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;  /* translucent blue on desktop */
+  font-size: 14px;
+  user-select: none;
+  z-index: 10000;
+  font-family: 'Segoe UI', sans-serif;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  footer {
+    position: fixed;      /* keep fixed on mobile too */
+    bottom: 10px;         /* 10px from bottom */
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    margin: 0;
+    pointer-events: auto;
+    white-space: nowrap;
+    font-size: 13px;
+    padding: 5px 10px;
+    color: #ffffff;       /* pure white text on mobile */
+    background: rgba(0,0,0,0.2); /* optional translucent bg for contrast */
+    border-radius: 8px;   /* optional rounded corners */
+  }
+}
+
+
+
   </style>
 </head>
 <body>
 
-<div id="scoreBoard">
-  Burst: <span id="burstCount">0</span><br>
-  High Score: <span id="highScore">0</span><br>
-  Time Left: <span id="timer">--</span><br>
-  Total Players: <span id="totalPlayers">0</span>
-</div>
+  <div id="scoreBoard">
+    <div>🎯 Burst: <span id="burstCount">0</span></div>
+    <div>🏆 High Score: <span id="highScore">0</span></div>
+    <div>⏱️ Time Left: <span id="timer">--</span></div>
+    <div>👥 Players: <span id="totalPlayers">0</span></div>
+  </div>
 
-<button id="startBtn">Start Game</button>
+  <button id="startBtn">Start Game</button>
 
-<div id="gameOverScreen">
-  🎯 Game Over!<br/>
-  You Burst <span id="finalScore">0</span> Bubbles!<br/><br/>
-  <button id="playAgainBtn">Play Again</button>
-</div>
+  <div id="gameOverScreen">
+    🎯 Game Over!<br/>
+    You Burst <span id="finalScore">0</span> Bubbles!<br/>
+    <button id="playAgainBtn">Play Again</button>
+  </div>
 
-<audio id="popSound" preload="auto" src="https://cdn.jsdelivr.net/gh/sairam777/files/bubble-pop.mp3"></audio>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <audio id="popSound" preload="auto" src="c:\Users\user\Downloads\pop-39222.mp3"></audio>
+  <audio id="milestoneSound" preload="auto" src="https://cdn.jsdelivr.net/gh/sairam777/files/celebrate.mp3"></audio>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<script>
-  const totalBubbles = 50;
-  let burstCount = 0;
-  let highScore = parseInt(localStorage.getItem('bubbleHighScore')) || 0;
-  let totalPlayers = parseInt(localStorage.getItem('totalPlayers')) || 0;
-  let gameRunning = false;
-  let timerInterval;
-  let timeLeft = 30;
+  <script>
+    const totalBubbles = 50;
+    let burstCount = 0;
+    let highScore = parseInt(localStorage.getItem('bubbleHighScore')) || 0;
+    let totalPlayers = parseInt(localStorage.getItem('totalPlayers')) || 0;
+    let gameRunning = false;
+    let timerInterval;
+    let timeLeft = 30;
 
-  const burstEl = document.getElementById('burstCount');
-  const highScoreEl = document.getElementById('highScore');
-  const timerEl = document.getElementById('timer');
-  const startBtn = document.getElementById('startBtn');
-  const popSound = document.getElementById('popSound');
-  const gameOverScreen = document.getElementById('gameOverScreen');
-  const finalScore = document.getElementById('finalScore');
-  const playAgainBtn = document.getElementById('playAgainBtn');
-  const totalPlayersEl = document.getElementById('totalPlayers');
+    const burstEl = document.getElementById('burstCount');
+    const highScoreEl = document.getElementById('highScore');
+    const timerEl = document.getElementById('timer');
+    const startBtn = document.getElementById('startBtn');
+    const popSound = document.getElementById('popSound');
+    const milestoneSound = document.getElementById('milestoneSound');
+    const gameOverScreen = document.getElementById('gameOverScreen');
+    const finalScore = document.getElementById('finalScore');
+    const playAgainBtn = document.getElementById('playAgainBtn');
+    const totalPlayersEl = document.getElementById('totalPlayers');
 
-  highScoreEl.textContent = highScore;
-  totalPlayersEl.textContent = totalPlayers;
+    const milestoneTargets = [10, 20, 30, 50, 100];
 
-  function createBubble() {
-    const bubble = document.createElement('div');
-    bubble.className = 'bubble';
-    const size = Math.random() * 50 + 50;
-    bubble.style.width = `${size}px`;
-    bubble.style.height = `${size}px`;
-    bubble.style.left = `${Math.random() * (window.innerWidth - size)}px`;
-    bubble.style.top = `${Math.random() * (window.innerHeight - size)}px`;
-    bubble.style.animationDuration = (10 + Math.random() * 7) + 's';
-
-    bubble.addEventListener('click', () => handleBurst(bubble));
-    bubble.addEventListener('touchstart', () => handleBurst(bubble));
-
-    document.body.appendChild(bubble);
-  }
-
-  function removeAllBubbles() {
-    document.querySelectorAll('.bubble').forEach(b => b.remove());
-  }
-
-  function handleBurst(bubble) {
-    if (!gameRunning || bubble.classList.contains('burst')) return;
-    bubble.classList.add('burst');
-    burstCount++;
-    burstEl.textContent = burstCount;
-    try {
-      popSound.currentTime = 0;
-      popSound.play();
-    } catch (e) {}
-    burstEl.classList.add('celebrate');
-    setTimeout(() => burstEl.classList.remove('celebrate'), 300);
-    setTimeout(() => {
-      bubble.remove();
-      if (gameRunning) createBubble();
-    }, 400);
-  }
-
-  // Burst bubble on mouse move hover within 50px distance
-  document.addEventListener("mousemove", function (e) {
-    if (!gameRunning) return;
-    const bubbles = document.querySelectorAll(".bubble");
-    bubbles.forEach((bubble) => {
-      const rect = bubble.getBoundingClientRect();
-      const distance = Math.hypot(
-        e.clientX - (rect.left + rect.width / 2),
-        e.clientY - (rect.top + rect.height / 2)
-      );
-      if (distance < 50) handleBurst(bubble);
-    });
-  });
-
-  function startGame() {
-    burstCount = 0;
-    burstEl.textContent = burstCount;
-    timerEl.textContent = timeLeft;
-    gameOverScreen.style.display = 'none';
-    removeAllBubbles();
-
-    for(let i=0; i < totalBubbles; i++) createBubble();
-
-    gameRunning = true;
-    startBtn.style.display = 'none';
-
-    timerInterval = setInterval(() => {
-      timeLeft--;
-      timerEl.textContent = timeLeft;
-      if (timeLeft <= 0) endGame();
-    }, 1000);
-  }
-
-  function endGame() {
-    gameRunning = false;
-    clearInterval(timerInterval);
-    gameOverScreen.style.display = 'block';
-    finalScore.textContent = burstCount;
-    removeAllBubbles();
-
-    if (burstCount > highScore) {
-      highScore = burstCount;
-      localStorage.setItem('bubbleHighScore', highScore);
-      highScoreEl.textContent = highScore;
-    }
-
-    totalPlayers++;
-    localStorage.setItem('totalPlayers', totalPlayers);
+    highScoreEl.textContent = highScore;
     totalPlayersEl.textContent = totalPlayers;
 
-    confetti({
-      particleCount: 200,
-      spread: 100,
-      origin: { y: 0.6 }
+    function createBubble() {
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble';
+      const size = Math.random() * 50 + 50;
+      bubble.style.width = `${size}px`;
+      bubble.style.height = `${size}px`;
+      bubble.style.left = `${Math.random() * (window.innerWidth - size)}px`;
+      bubble.style.top = `${Math.random() * (window.innerHeight - size)}px`;
+      bubble.style.animationDuration = (10 + Math.random() * 7) + 's';
+
+      bubble.addEventListener('click', () => handleBurst(bubble));
+      bubble.addEventListener('touchstart', () => handleBurst(bubble));
+
+      document.body.appendChild(bubble);
+    }
+
+    function removeAllBubbles() {
+      document.querySelectorAll('.bubble').forEach(b => b.remove());
+    }
+
+    function handleBurst(bubble) {
+      if (!gameRunning || bubble.classList.contains('burst')) return;
+      bubble.classList.add('burst');
+      burstCount++;
+      burstEl.textContent = burstCount;
+
+      try {
+        popSound.currentTime = 0;
+        popSound.play();
+      } catch (e) {}
+
+      // Milestone sound
+      if (milestoneTargets.includes(burstCount)) {
+        try {
+          milestoneSound.currentTime = 0;
+          milestoneSound.play();
+        } catch (e) {}
+      }
+
+      burstEl.classList.add('celebrate');
+      setTimeout(() => burstEl.classList.remove('celebrate'), 300);
+      setTimeout(() => {
+        bubble.remove();
+        if (gameRunning) createBubble();
+      }, 400);
+    }
+
+    document.addEventListener("mousemove", function (e) {
+      if (!gameRunning) return;
+      const bubbles = document.querySelectorAll(".bubble");
+      bubbles.forEach((bubble) => {
+        const rect = bubble.getBoundingClientRect();
+        const distance = Math.hypot(
+          e.clientX - (rect.left + rect.width / 2),
+          e.clientY - (rect.top + rect.height / 2)
+        );
+        if (distance < 50) handleBurst(bubble);
+      });
     });
 
-    timeLeft = 30;
+    function startGame() {
+      burstCount = 0;
+      burstEl.textContent = burstCount;
+      timerEl.textContent = timeLeft;
+      gameOverScreen.style.display = 'none';
+      removeAllBubbles();
 
-    // Hide start button after game ends, ONLY show game over screen
-    startBtn.style.display = 'none';
-  }
+      for (let i = 0; i < totalBubbles; i++) createBubble();
 
-  startBtn.addEventListener('click', startGame);
-  playAgainBtn.addEventListener('click', () => {
-    gameOverScreen.style.display = 'none';
-    startGame();
-  });
-</script>
+      gameRunning = true;
+      startBtn.style.display = 'none';
 
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function endGame() {
+      gameRunning = false;
+      clearInterval(timerInterval);
+      gameOverScreen.style.display = 'block';
+      finalScore.textContent = burstCount;
+      removeAllBubbles();
+
+      if (burstCount > highScore) {
+        highScore = burstCount;
+        localStorage.setItem('bubbleHighScore', highScore);
+        highScoreEl.textContent = highScore;
+      }
+
+      totalPlayers++;
+      localStorage.setItem('totalPlayers', totalPlayers);
+      totalPlayersEl.textContent = totalPlayers;
+
+      confetti({
+        particleCount: 200,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+
+      timeLeft = 30;
+      startBtn.style.display = 'none';
+    }
+
+    startBtn.addEventListener('click', startGame);
+    playAgainBtn.addEventListener('click', () => {
+      gameOverScreen.style.display = 'none';
+      startGame();
+    });
+  </script>
 </body>
+<footer>
+  © 2025 Sairam Bandi. All rights reserved.
+</footer>
 </html>
