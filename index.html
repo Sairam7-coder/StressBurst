@@ -4,12 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Stress Burst</title>
+  <link rel="manifest" href="manifest.json">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #0b0c0c;
+      background: #21312b;
       font-family: 'Segoe UI', sans-serif;
       user-select: none;
       overflow: hidden;
@@ -193,7 +194,7 @@ footer {
     <div>🎯 Burst: <span id="burstCount">0</span></div>
     <div>🏆 High Score: <span id="highScore">0</span></div>
     <div>⏱️ Time Left: <span id="timer">--</span></div>
-    <div>👥 Players: <span id="totalPlayers">0</span></div>
+    <div>👥 Played: <span id="totalPlayers">0</span></div>
   </div>
 
   <button id="startBtn">Start Game</button>
@@ -203,8 +204,9 @@ footer {
     You Burst <span id="finalScore">0</span> Bubbles!<br/>
     <button id="playAgainBtn">Play Again</button>
   </div>
-  
-  <audio id="popSound" preload="auto" src="pop-39222.mp3"></audio>
+
+  <audio id="popSound" preload="auto" src="c:\Users\user\Desktop\Stress Burst\pop-39222.mp3"></audio>
+  <!-- <audio id="milestoneSound" preload="auto" src="https://cdn.jsdelivr.net/gh/sairam777/files/celebrate.mp3"></audio> -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <script>
